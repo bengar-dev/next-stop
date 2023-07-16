@@ -1,9 +1,9 @@
-import TamServices from "@/services/tam";
+import TamControllers from "@/controllers/tam";
 import express, { Router } from "express";
 
 class TamRoutes {
   public router: Router;
-  private tamServices = new TamServices();
+  private tamControllers = new TamControllers();
 
   constructor() {
     this.router = express.Router();
@@ -11,13 +11,9 @@ class TamRoutes {
   }
 
   private routes(): void {
-    this.router.get("/", async (req, res, next) => {
-      /**
-       * Todo: in controller
-       */
-      const test = await this.tamServices.getCSVFileFromTAMApi();
-      res.status(200).json(test);
-    });
+    this.router.get("/", this.tamControllers.getApiDataJson);
+    this.router.get("/stops", this.tamControllers.getTamStops);
+    this.router.get("/stop/:id", this.tamControllers.getNextStop);
   }
 }
 

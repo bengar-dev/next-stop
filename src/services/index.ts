@@ -1,6 +1,5 @@
 import axios, { Axios } from "axios";
 import fs from "fs";
-import http from "http";
 import Downloader from "nodejs-file-downloader";
 //@ts-ignore
 import csvToJson from "convert-csv-to-json";
@@ -8,14 +7,12 @@ import csvToJson from "convert-csv-to-json";
 class Services {
   public axios: Axios;
   public fs: typeof fs;
-  public http: typeof http;
   public downloader: Downloader;
   public csv: typeof csvToJson;
 
   constructor() {
     this.axios = axios;
     this.fs = fs;
-    this.http = http;
     this.csv = csvToJson;
   }
 
@@ -40,6 +37,16 @@ class Services {
       console.log("Download failed", err);
       return null;
     }
+  };
+
+  public writeFile = async <T>(target: string, data: T): Promise<boolean> => {
+    const dataToString = JSON.stringify(data);
+
+    this.fs.writeFile(target, dataToString, "utf-8", (err) => {
+      if (err) throw err;
+    });
+
+    return true;
   };
 }
 

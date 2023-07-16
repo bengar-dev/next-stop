@@ -1,5 +1,6 @@
 import Services from "@/services/index";
 import { TamRes } from "@/types/global";
+import data from "~/tam.json";
 
 class TamServices extends Services {
   constructor() {
@@ -15,7 +16,11 @@ class TamServices extends Services {
     return jsonFile;
   };
 
-  public convertCsvFileToJson = async (path: string): Promise<TamRes[]> => {
+  public readCurrentData = async (): Promise<TamRes[]> => {
+    return data as TamRes[];
+  };
+
+  private convertCsvFileToJson = async (path: string): Promise<TamRes[]> => {
     const csvPath = path;
 
     return this.csv.getJsonFromCsv(csvPath);
