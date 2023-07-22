@@ -1,6 +1,7 @@
 import axios, { Axios } from "axios";
 import fs from "fs";
 import Downloader from "nodejs-file-downloader";
+import _ from "lodash";
 //@ts-ignore
 import csvToJson from "convert-csv-to-json";
 
@@ -9,11 +10,13 @@ class Services {
   public fs: typeof fs;
   public downloader: Downloader;
   public csv: typeof csvToJson;
+  public lodash: typeof _;
 
   constructor() {
     this.axios = axios;
     this.fs = fs;
     this.csv = csvToJson;
+    this.lodash = _;
   }
 
   public downloadFile = async (

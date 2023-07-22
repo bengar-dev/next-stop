@@ -12,3 +12,12 @@ export interface TamRes {
   dest_ar_code: string;
   course_sae: string;
 }
+
+export interface TamResFormatData extends TamRes {
+  delay: NextDepartureInfo;
+}
+
+export interface NextDepartureInfo {
+  departureTime: Date;
+  timeRemainingInMinutes: number;
+}

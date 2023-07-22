@@ -1,5 +1,12 @@
 import Services from "@/services/index";
-import { TamRes } from "@/types/global";
+import { NextDepartureInfo, TamRes, TamResFormatData } from "@/types/global";
+import {
+  parse,
+  set,
+  differenceInMinutes,
+  differenceInSeconds,
+  addDays,
+} from "date-fns";
 import data from "~/tam.json";
 
 class TamServices extends Services {
@@ -18,6 +25,51 @@ class TamServices extends Services {
 
   public readCurrentData = async (): Promise<TamRes[]> => {
     return data as TamRes[];
+  };
+
+  public calculateDiffTimeDeparture = (
+    departureTime: string
+  ): NextDepartureInfo => {
+    const currentTime = new Date();
+    const [hours, minutes, seconds] = departureTime.split(":").map(Number);
+
+    let nextDepartureDate = set(currentTime, { hours, minutes, seconds });
+
+    if (nextDepartureDate < currentTime) {
+      nextDepartureDate = addDays(nextDepartureDate, 1);
+    }
+
+    const minutesDifference = differenceInMinutes(
+      nextDepartureDate,
+      currentTime
+    );
+
+    return {
+      departureTime: nextDepartureDate,
+      timeRemainingInMinutes: minutesDifference,
+    };
+  };
+
+  public cleanErrorNextStop = (
+    data: TamResFormatData[]
+  ): TamResFormatData[] => {
+    const newCleanArrayData: TamResFormatData[] = [];
+    for (let i = 0; i < data.length; i++) {
+      if (data[i] && data[i + 1]) {
+        if (
+          data[i].delay.timeRemainingInMinutes >
+          data[i + 1].delay.timeRemainingInMinutes
+        ) {
+          continue;
+        } else {
+          newCleanArrayData.push(data[i]);
+        }
+      } else {
+        newCleanArrayData.push(data[i]);
+      }
+    }
+
+    return newCleanArrayData;
   };
 
   private convertCsvFileToJson = async (path: string): Promise<TamRes[]> => {
