@@ -7,7 +7,6 @@ import {
   differenceInSeconds,
   addDays,
 } from "date-fns";
-import data from "~/tam.json";
 
 class TamServices extends Services {
   constructor() {
