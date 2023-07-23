@@ -1,12 +1,6 @@
 import Services from "@/services/index";
 import { NextDepartureInfo, TamRes, TamResFormatData } from "@/types/global";
-import {
-  parse,
-  set,
-  differenceInMinutes,
-  differenceInSeconds,
-  addDays,
-} from "date-fns";
+import { set, differenceInMinutes, addDays } from "date-fns";
 
 class TamServices extends Services {
   constructor() {
@@ -23,7 +17,7 @@ class TamServices extends Services {
   };
 
   public readCurrentData = async (): Promise<TamRes[]> => {
-    return data as TamRes[];
+    return [] as TamRes[];
   };
 
   public calculateDiffTimeDeparture = (
