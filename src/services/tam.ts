@@ -51,7 +51,8 @@ class TamServices extends Services {
   };
 
   public cleanErrorNextStop = (
-    data: TamResFormatData[]
+    data: TamResFormatData[],
+    direction: string
   ): TamResFormatData[] => {
     const newCleanArrayData: TamResFormatData[] = [];
     for (let i = 0; i < data.length; i++) {
@@ -69,7 +70,7 @@ class TamServices extends Services {
       }
     }
 
-    return newCleanArrayData;
+    return newCleanArrayData.filter((el) => el.direction_id === direction);
   };
 
   private convertCsvFileToJson = async (path: string): Promise<TamRes[]> => {

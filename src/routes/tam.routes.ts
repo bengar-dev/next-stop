@@ -11,9 +11,9 @@ class TamRoutes {
   }
 
   private routes(): void {
-    this.router.get("/", this.tamControllers.getApiDataJson);
+    // this.router.get("/", this.tamControllers.getApiDataJson);
     this.router.get("/stops", this.tamControllers.getTamStops);
-    this.router.get("/stop/:id", this.tamControllers.getNextStop);
+    this.router.get("/stop", this.tamControllers.getNextStop);
   }
 }
 

@@ -10,22 +10,14 @@ class TamControllers extends Controllers {
     super();
   }
 
-  public getApiDataJson = async (
-    req: Request,
-    res: Response
-  ): Promise<Response> => {
+  private getApiDataJson = async (): Promise<TamRes[] | false> => {
     try {
       const jsonFile = await this.tamServices.getCSVFileFromTAMApi();
       if (!jsonFile) throw new Error("Can not get data from json");
 
-      this.tamServices.fs.writeFile("tam.json", "", () => {
-        console.log("clean old data");
-        this.tamServices.writeFile<TamRes[]>("tam.json", jsonFile);
-      });
-
-      return this.responseServices.successResponse(res, jsonFile, 200);
+      return jsonFile;
     } catch (err: any) {
-      return this.responseServices.failResponse(res, err.messages, 500);
+      return false;
     }
   };
 
@@ -34,10 +26,12 @@ class TamControllers extends Controllers {
     res: Response
   ): Promise<Response> => {
     try {
-      const data = await this.tamServices.readCurrentData();
+      const data = await this.getApiDataJson();
+      if (!data) throw new Error("Can not get data from json");
 
       const allStops = data
         .map((el) => ({
+          direction_id: el.direction_id,
           route_short_name: el.route_short_name,
           stop_code: el.stop_code,
           stop_name: `L${el.route_short_name} - ${el.stop_name} (Direction : ${
@@ -69,9 +63,11 @@ class TamControllers extends Controllers {
   };
 
   public getNextStop = async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const { id, direction } = req.query;
+
     try {
-      const data = await this.tamServices.readCurrentData();
+      const data = await this.getApiDataJson();
+      if (!data) throw new Error("Can not get data from json");
 
       const findStops = data
         .filter((el) => el.stop_id === id)
@@ -84,7 +80,10 @@ class TamControllers extends Controllers {
         throw new Error("Stop id not found");
       }
 
-      const clean = this.tamServices.cleanErrorNextStop(findStops);
+      const clean = this.tamServices.cleanErrorNextStop(
+        findStops,
+        direction as string
+      );
 
       return this.responseServices.successResponse(res, clean, 200);
     } catch (err: any) {
